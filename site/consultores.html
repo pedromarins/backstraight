@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BackStraight para Consultores — Escale sua consultoria de ergonomia</title>
+<meta name="description" content="Potencialize sua consultoria de ergonomia com tecnologia baseada em ciência. Monitoramento contínuo, relatórios automatizados, receita recorrente mensal.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --fg:#0a0a0f;
+  --fg-mid:#4a4a5a;
+  --fg-muted:#8a8a9a;
+  --bg:#faf9f7;
+  --bg-dark:#0a0a0f;
+  --accent:#667eea;
+  --accent2:#764ba2;
+  --green:#2ecc71;
+  --red:#e74c3c;
+  --orange:#f39c12;
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --glass:rgba(255,255,255,0.06);
+  --glass-border:rgba(255,255,255,0.1);
+}
+
+html{scroll-behavior:smooth;scroll-snap-type:y proximity}
+body{font-family:var(--sans);color:var(--fg);background:var(--bg);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;transition:background .3s,backdrop-filter .3s}
+nav.scrolled{background:rgba(10,10,15,0.85);backdrop-filter:blur(20px)}
+.nav-logo{font-family:var(--serif);font-size:22px;color:#fff;text-decoration:none;letter-spacing:-0.5px}
+.nav-logo span{color:var(--accent);font-style:italic}
+.nav-cta{padding:10px 24px;border:1px solid rgba(255,255,255,0.25);border-radius:100px;color:#fff;text-decoration:none;font-size:13px;font-weight:500;letter-spacing:0.3px;transition:all .25s}
+.nav-cta:hover{background:var(--accent);border-color:var(--accent)}
+
+section{min-height:100vh;scroll-snap-align:start;position:relative;display:flex;align-items:center;justify-content:center;padding:100px 48px}
+@media(max-width:768px){section{padding:80px 24px}nav{padding:16px 24px}}
+
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-d1{transition-delay:.1s}.reveal-d2{transition-delay:.2s}.reveal-d3{transition-delay:.3s}.reveal-d4{transition-delay:.4s}.reveal-d5{transition-delay:.5s}
+
+.hero{background:var(--bg-dark);flex-direction:column;text-align:center;gap:32px;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(102,126,234,0.15),transparent),radial-gradient(ellipse 60% 50% at 70% 70%,rgba(118,75,162,0.1),transparent)}
+.hero-kicker{font-size:13px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--accent);position:relative}
+.hero h1{font-family:var(--serif);font-size:clamp(40px,7vw,88px);line-height:1.05;color:#fff;max-width:900px;position:relative;letter-spacing:-1px}
+.hero h1 em{font-style:italic;color:var(--accent);position:relative}
+.hero h1 em::after{content:'';position:absolute;bottom:4px;left:0;right:0;height:3px;background:var(--accent);border-radius:2px;opacity:.5}
+.hero-sub{font-size:clamp(16px,2vw,20px);color:rgba(255,255,255,0.55);max-width:600px;line-height:1.6;position:relative}
+.hero-cta{display:inline-flex;align-items:center;gap:10px;padding:16px 36px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;text-decoration:none;border-radius:100px;font-size:15px;font-weight:600;letter-spacing:0.2px;position:relative;transition:transform .25s,box-shadow .25s}
+.hero-cta:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(102,126,234,0.4)}
+.hero-cta svg{width:18px;height:18px}
+.hero-badge{margin-top:16px;font-size:12px;color:rgba(255,255,255,0.35);position:relative;letter-spacing:0.5px}
+.hero-badge strong{color:var(--green);font-weight:600}
+
+.section-header{text-align:center;max-width:700px}
+.section-kicker{font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+.section-title{font-family:var(--serif);font-size:clamp(32px,5vw,56px);line-height:1.1;letter-spacing:-0.5px;color:var(--fg)}
+.section-title em{font-style:italic;color:var(--accent)}
+.section-sub{margin-top:16px;font-size:17px;color:var(--fg-mid);line-height:1.6}
+
+/* Opportunity cards */
+.opportunity{background:var(--bg);flex-direction:column;gap:60px}
+.opp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1100px;width:100%}
+@media(max-width:900px){.opp-grid{grid-template-columns:1fr}}
+.opp-card{background:#fff;border-radius:20px;padding:36px 32px;border:1px solid rgba(0,0,0,0.06);transition:transform .3s,box-shadow .3s}
+.opp-card:hover{transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.08)}
+.opp-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:20px}
+.opp-card:nth-child(1) .opp-icon{background:rgba(102,126,234,0.1);color:var(--accent)}
+.opp-card:nth-child(2) .opp-icon{background:rgba(46,204,113,0.1);color:var(--green)}
+.opp-card:nth-child(3) .opp-icon{background:rgba(243,156,18,0.1);color:var(--orange)}
+.opp-card h3{font-family:var(--serif);font-size:22px;margin-bottom:10px;letter-spacing:-0.3px}
+.opp-card p{font-size:14px;color:var(--fg-mid);line-height:1.65}
+.opp-card .stat{font-family:var(--serif);font-size:clamp(48px,6vw,64px);color:var(--fg);margin-top:20px;letter-spacing:-2px;line-height:1}
+.opp-card .stat-label{font-size:12px;color:var(--fg-muted);margin-top:4px}
+
+/* Revenue model */
+.revenue{background:var(--bg-dark);color:#fff;flex-direction:column;gap:48px}
+.revenue .section-title{color:#fff}
+.revenue .section-sub{color:rgba(255,255,255,0.5)}
+.revenue-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1000px;width:100%}
+@media(max-width:900px){.revenue-cards{grid-template-columns:1fr}}
+.rev-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:36px 28px;text-align:center;backdrop-filter:blur(10px)}
+.rev-card .rev-icon{font-size:36px;margin-bottom:16px}
+.rev-card h3{font-family:var(--serif);font-size:20px;margin-bottom:8px}
+.rev-card p{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6}
+.rev-highlight{background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.2);border-radius:14px;padding:20px 28px;max-width:900px;text-align:center;width:100%}
+.rev-highlight p{font-size:15px;color:rgba(255,255,255,0.8)}
+.rev-highlight strong{color:var(--green)}
+
+/* Tool section */
+.tool{background:var(--bg);flex-direction:column;gap:60px}
+.tool-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:900px;width:100%}
+@media(max-width:768px){.tool-grid{grid-template-columns:1fr}}
+.tool-card{background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:18px;padding:28px 28px;display:flex;gap:16px;align-items:flex-start;transition:transform .3s,box-shadow .3s}
+.tool-card:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,0.06)}
+.tool-icon{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;color:#fff}
+.tool-card h3{font-size:15px;font-weight:600;margin-bottom:4px;letter-spacing:-0.2px}
+.tool-card p{font-size:13px;color:var(--fg-mid);line-height:1.55}
+
+/* Evidence */
+.evidence{background:var(--bg-dark);color:#fff;flex-direction:column;gap:60px}
+.evidence .section-title{color:#fff}
+.evidence-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;max-width:1100px;width:100%}
+@media(max-width:900px){.evidence-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.evidence-grid{grid-template-columns:1fr}}
+.evidence-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:32px 24px;text-align:center;backdrop-filter:blur(10px)}
+.evidence-num{font-family:var(--serif);font-size:clamp(52px,7vw,72px);letter-spacing:-2px;line-height:1;background:linear-gradient(135deg,var(--accent),#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.evidence-card h4{font-size:14px;font-weight:500;color:rgba(255,255,255,0.7);margin-top:8px;line-height:1.4}
+.evidence-card .source{font-size:11px;color:rgba(255,255,255,0.3);margin-top:12px;font-style:italic}
+
+/* Compliance */
+.compliance{background:linear-gradient(135deg,#0f0c29,#1a1145,#24243e);color:#fff;flex-direction:column;gap:48px}
+.compliance .section-title{color:#fff}
+.compliance-alert{background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.2);border-radius:14px;padding:20px 28px;max-width:900px;text-align:center;width:100%}
+.compliance-alert p{font-size:15px;color:rgba(255,255,255,0.8)}
+.compliance-alert strong{color:var(--green)}
+.compliance-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:900px;width:100%}
+@media(max-width:768px){.compliance-grid{grid-template-columns:1fr}}
+.compliance-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:28px;backdrop-filter:blur(10px)}
+.compliance-card h3{font-family:var(--serif);font-size:20px;margin-bottom:8px}
+.compliance-card p{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6}
+
+/* FAQ */
+.faq{background:var(--bg-dark);color:#fff;flex-direction:column;gap:48px}
+.faq .section-title{color:#fff}
+.faq-list{max-width:760px;width:100%;display:flex;flex-direction:column;gap:8px}
+.faq-item{border:1px solid rgba(255,255,255,0.08);border-radius:14px;overflow:hidden;background:rgba(255,255,255,0.03)}
+.faq-q{padding:20px 24px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:15px;font-weight:500;transition:background .2s;user-select:none}
+.faq-q:hover{background:rgba(255,255,255,0.04)}
+.faq-q .arrow{font-size:18px;color:var(--accent);transition:transform .3s;flex-shrink:0;margin-left:16px}
+.faq-item.open .faq-q .arrow{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.16,1,.3,1),padding .3s}
+.faq-a-inner{padding:0 24px 20px;font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
+
+/* Contact */
+.contact{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;flex-direction:column;gap:36px;text-align:center}
+.contact .section-title{color:#fff}
+.contact .section-sub{color:rgba(255,255,255,0.7)}
+.contact-actions{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+.contact-btn{padding:16px 36px;border-radius:100px;font-size:15px;font-weight:600;text-decoration:none;transition:all .25s;letter-spacing:0.2px}
+.contact-btn.primary{background:#fff;color:var(--accent)}
+.contact-btn.primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,0.2)}
+.contact-btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.4);color:#fff}
+.contact-btn.secondary:hover{background:rgba(255,255,255,0.1)}
+.contact-info{font-size:14px;color:rgba(255,255,255,0.6);margin-top:8px}
+
+footer{background:var(--bg-dark);color:rgba(255,255,255,0.3);text-align:center;padding:32px 48px;font-size:12px;border-top:1px solid rgba(255,255,255,0.06)}
+footer a{color:var(--accent);text-decoration:none}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a href="index.html" class="nav-logo">Back<span>Straight</span></a>
+  <div style="display:flex;align-items:center;gap:20px">
+    <a href="index.html" style="color:rgba(255,255,255,0.6);text-decoration:none;font-size:13px;font-weight:500;transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.6)'">Para empresas</a>
+    <a href="#contato" class="nav-cta">Seja parceiro</a>
+  </div>
+</nav>
+
+<!-- 1. HERO -->
+<section class="hero">
+  <span class="hero-kicker reveal">Para consultores de ergonomia</span>
+  <h1 class="reveal reveal-d1">Escale sua consultoria com tecnologia <em>science-based</em>.</h1>
+  <p class="hero-sub reveal reveal-d2">Ofereça monitoramento contínuo de postura por IA aos seus clientes. Relatórios automatizados, dados objetivos e receita recorrente mensal &mdash; sem aumentar sua equipe.</p>
+  <a href="#contato" class="hero-cta reveal reveal-d3">
+    Quero ser parceiro
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  </a>
+  <p class="hero-badge reveal reveal-d4">Modelo de parceria com <strong>receita recorrente mensal</strong></p>
+</section>
+
+<!-- 2. OPPORTUNITY -->
+<section class="opportunity">
+  <div class="section-header reveal">
+    <div class="section-kicker">A oportunidade</div>
+    <h2 class="section-title">A NR-1 cria <em>urgência</em>. Você entrega a solução.</h2>
+    <p class="section-sub">A partir de maio de 2026, toda empresa precisa de monitoramento ergonômico contínuo. Consultorias que oferecerem tecnologia science-based saem na frente.</p>
+  </div>
+  <div class="opp-grid">
+    <div class="opp-card reveal reveal-d1">
+      <div class="opp-icon">&#9878;</div>
+      <h3>Demanda regulatória</h3>
+      <p>A NR-1 e NR-17 exigem medidas ativas e documentadas. Empresas precisam de soluções &mdash; não apenas laudos. Você tem o canal, nós temos a ferramenta.</p>
+      <div class="stat">100%</div>
+      <div class="stat-label">das empresas CLT precisam cumprir a NR-17</div>
+    </div>
+    <div class="opp-card reveal reveal-d2">
+      <div class="opp-icon">&#128176;</div>
+      <h3>Receita recorrente</h3>
+      <p>Saia do modelo de projeto pontual. O BackStraight gera assinatura mensal por colaborador &mdash; receita previsível que cresce com cada novo cliente.</p>
+      <div class="stat">MRR</div>
+      <div class="stat-label">receita mensal recorrente por colaborador</div>
+    </div>
+    <div class="opp-card reveal reveal-d3">
+      <div class="opp-icon">&#128640;</div>
+      <h3>Escala sem equipe</h3>
+      <p>Uma visita presencial atende 1 empresa por dia. O BackStraight monitora centenas de colaboradores simultaneamente, sem custo operacional adicional.</p>
+      <div class="stat">10&rarr;10k</div>
+      <div class="stat-label">colaboradores com a mesma ferramenta</div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. REVENUE MODEL -->
+<section class="revenue">
+  <div class="section-header reveal">
+    <div class="section-kicker">Modelo de negócio</div>
+    <h2 class="section-title" style="color:#fff">De projeto pontual para <em>receita recorrente</em></h2>
+    <p class="section-sub" style="color:rgba(255,255,255,0.5)">Cobrança mensal por colaborador. Você define a margem. O BackStraight cuida da tecnologia.</p>
+  </div>
+  <div class="revenue-cards">
+    <div class="rev-card reveal reveal-d1">
+      <div class="rev-icon">&#128197;</div>
+      <h3>Assinatura mensal</h3>
+      <p>Cobrança recorrente por colaborador monitorado. Sem fidelidade de longo prazo para o cliente &mdash; o valor se prova mês a mês.</p>
+    </div>
+    <div class="rev-card reveal reveal-d2">
+      <div class="rev-icon">&#128200;</div>
+      <h3>Margem do consultor</h3>
+      <p>Você revende o BackStraight como parte da sua oferta de serviços. Preço final definido por você. Sua consultoria, suas regras.</p>
+    </div>
+    <div class="rev-card reveal reveal-d3">
+      <div class="rev-icon">&#128203;</div>
+      <h3>Relatórios automáticos</h3>
+      <p>PDFs profissionais gerados automaticamente. Menos trabalho manual para você, mais valor percebido pelo cliente.</p>
+    </div>
+  </div>
+  <div class="rev-highlight reveal reveal-d4">
+    <p>Exemplo: 200 colaboradores &times; assinatura mensal = <strong>receita recorrente previsível</strong> que não depende de novos projetos.</p>
+  </div>
+</section>
+
+<!-- 4. THE TOOL -->
+<section class="tool">
+  <div class="section-header reveal">
+    <div class="section-kicker">A ferramenta</div>
+    <h2 class="section-title">O que você entrega ao seu <em>cliente</em></h2>
+    <p class="section-sub">Tecnologia baseada em evidências científicas que complementa sua avaliação presencial com monitoramento contínuo.</p>
+  </div>
+  <div class="tool-grid">
+    <div class="tool-card reveal reveal-d1">
+      <div class="tool-icon">&#129504;</div>
+      <div>
+        <h3>IA que aprende cada pessoa</h3>
+        <p>Calibração individual em 2 minutos. Nada genérico &mdash; os limites são personalizados para o corpo, cadeira e mesa de cada colaborador.</p>
+      </div>
+    </div>
+    <div class="tool-card reveal reveal-d2">
+      <div class="tool-icon">&#128202;</div>
+      <div>
+        <h3>Relatórios diários, semanais e mensais</h3>
+        <p>Score de postura, alertas, tempo sentado, gráficos hora-a-hora. Dados que uma visita presencial não captura.</p>
+      </div>
+    </div>
+    <div class="tool-card reveal reveal-d3">
+      <div class="tool-icon">&#128196;</div>
+      <div>
+        <h3>PDF profissional para o RH</h3>
+        <p>Exportação em um clique. Layout com métricas, gráficos e detalhamento semanal. Pronto para apresentar ao SESMT.</p>
+      </div>
+    </div>
+    <div class="tool-card reveal reveal-d4">
+      <div class="tool-icon">&#128276;</div>
+      <div>
+        <h3>Alertas science-based</h3>
+        <p>Postura em tempo real, pausas a cada 30-60 min (British Journal of Sports Medicine), wind down para prevenção de burnout (National Sleep Foundation).</p>
+      </div>
+    </div>
+    <div class="tool-card reveal reveal-d5">
+      <div class="tool-icon">&#128274;</div>
+      <div>
+        <h3>Privacidade total (LGPD)</h3>
+        <p>100% processado no dispositivo. Nenhuma imagem sai do computador. Argumento forte de venda para o DPO e jurídico do cliente.</p>
+      </div>
+    </div>
+    <div class="tool-card reveal">
+      <div class="tool-icon">&#127760;</div>
+      <div>
+        <h3>Português e inglês</h3>
+        <p>Pronto para operações nacionais e multinacionais. macOS e Windows.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. EVIDENCE -->
+<section class="evidence">
+  <div class="section-header reveal">
+    <div class="section-kicker">Evidências científicas</div>
+    <h2 class="section-title" style="color:#fff">Credibilidade para sua <em>prática</em></h2>
+  </div>
+  <div class="evidence-grid">
+    <div class="evidence-card reveal reveal-d1">
+      <div class="evidence-num">80%</div>
+      <h4>dos adultos desenvolverão dor lombar ao longo da vida</h4>
+      <div class="source">The Lancet, 2018</div>
+    </div>
+    <div class="evidence-card reveal reveal-d2">
+      <div class="evidence-num">24%</div>
+      <h4>aumento no risco de mortalidade por tempo sentado prolongado</h4>
+      <div class="source">Annals of Internal Medicine, 2015</div>
+    </div>
+    <div class="evidence-card reveal reveal-d3">
+      <div class="evidence-num">40%</div>
+      <h4>menos burnout com limites claros de horário de trabalho</h4>
+      <div class="source">PLOS ONE</div>
+    </div>
+    <div class="evidence-card reveal reveal-d4">
+      <div class="evidence-num">12+</div>
+      <h4>pontos de análise contínua por colaborador</h4>
+      <div class="source">Postura, pausas, tempo sentado, produtividade</div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. COMPLIANCE -->
+<section class="compliance">
+  <div class="section-header reveal">
+    <div class="section-kicker">O argumento de venda</div>
+    <h2 class="section-title" style="color:#fff">NR-17 e NR-1: o que seu cliente <em>precisa</em> ouvir</h2>
+  </div>
+  <div class="compliance-alert reveal">
+    <p>A NR-1 entra em vigor em <strong>26 de maio de 2026</strong>. Seu cliente ainda não tem monitoramento ergonômico contínuo? Essa é a sua abertura de venda.</p>
+  </div>
+  <div class="compliance-grid">
+    <div class="compliance-card reveal reveal-d1">
+      <h3>AEP e AET com dados reais</h3>
+      <p>Apresente ao RH não apenas um laudo, mas dados contínuos de monitoramento. Relatórios que mostram a evolução real da equipe ao longo de semanas e meses.</p>
+    </div>
+    <div class="compliance-card reveal reveal-d2">
+      <h3>Documentação de compliance</h3>
+      <p>PDFs exportáveis servem como evidência de que a empresa adotou medidas ativas. O consultor que entrega isso se diferencia de quem entrega apenas formulários.</p>
+    </div>
+    <div class="compliance-card reveal reveal-d3">
+      <h3>Prevenção de riscos psicossociais</h3>
+      <p>Lembretes de pausa e wind down endereçam diretamente os requisitos da NR-1 sobre riscos psicossociais integrados ao GRO.</p>
+    </div>
+    <div class="compliance-card reveal reveal-d4">
+      <h3>Multas de R$805 a R$6.708</h3>
+      <p>Por não-conformidade. Seu cliente paga muito mais para não se adequar do que para implementar o BackStraight. Faça essa conta com ele.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7. FAQ -->
+<section class="faq">
+  <div class="section-header reveal">
+    <div class="section-kicker">Perguntas frequentes</div>
+    <h2 class="section-title" style="color:#fff">Dúvidas sobre a parceria</h2>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item reveal">
+      <div class="faq-q">Como funciona o modelo de parceria? <span class="arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Você revende o BackStraight como parte da sua oferta de consultoria. Cobramos por colaborador monitorado com assinatura mensal. Você define seu preço final e sua margem. Sem custo de setup, sem investimento inicial.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">Preciso de equipe técnica para implementar? <span class="arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Não. A instalação é simples &mdash; um aplicativo desktop. A calibração leva 2 minutos por colaborador. Não exige treinamento técnico, hardware especial ou infraestrutura de TI.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">Os relatórios vêm com minha marca? <span class="arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Estamos desenvolvendo opções de white-label para consultores parceiros. Na versão atual, os PDFs são gerados com a marca BackStraight. Entre em contato para discutir customização.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">Como apresento isso para o RH do meu cliente? <span class="arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Use o argumento da NR-1 (vigência maio/2026) e o custo de não-conformidade (multas até R$6.708). Mostre que o BackStraight é science-based, 100% LGPD compliant (dados nunca saem do dispositivo) e gera relatórios automáticos para AEP/AET. Oferecemos materiais de apoio para consultores parceiros.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">O sistema é seguro para ambientes corporativos? <span class="arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner">100%. Toda a IA roda localmente no dispositivo do colaborador. Nenhuma imagem é enviada, armazenada ou compartilhada. A câmera desliga ao pausar. Não requer conexão com internet para monitorar. Compliance total com a LGPD.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">Qual o volume mínimo para ser parceiro? <span class="arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Não exigimos volume mínimo para começar. Você pode iniciar com um piloto em um cliente e escalar à medida que os resultados aparecem. Os dados de evolução do piloto são o melhor argumento de venda para os próximos clientes.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">Funciona no Windows? A maioria dos meus clientes usa Windows. <span class="arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Sim. O BackStraight funciona em macOS e Windows. A maioria dos ambientes corporativos brasileiros usa Windows e o aplicativo é totalmente compatível. Necessita apenas de uma webcam.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. CONTACT -->
+<section class="contact" id="contato">
+  <div class="section-header reveal">
+    <div class="section-kicker" style="color:rgba(255,255,255,0.6)">Próximo passo</div>
+    <h2 class="section-title">Pronto para escalar sua consultoria?</h2>
+    <p class="section-sub">Entre em contato para conhecer o modelo de parceria, condições e materiais de apoio para consultores.</p>
+  </div>
+  <div class="contact-actions reveal reveal-d1">
+    <a href="https://wa.me/5521992959087?text=Ol%C3%A1%2C%20sou%20consultor%20de%20ergonomia%20e%20quero%20conhecer%20o%20modelo%20de%20parceria%20do%20BackStraight." class="contact-btn primary" target="_blank">Quero ser parceiro</a>
+    <a href="https://wa.me/5521992959087?text=Ol%C3%A1%2C%20sou%20consultor%20e%20gostaria%20de%20agendar%20uma%20demonstra%C3%A7%C3%A3o%20do%20BackStraight." class="contact-btn secondary" target="_blank">Agendar demonstração</a>
+  </div>
+  <p class="contact-info reveal reveal-d2">WhatsApp: +55 21 99295-9087</p>
+</section>
+
+<footer>
+  <p>&copy; 2026 BackStraight. Todos os dados são processados e armazenados localmente no dispositivo do usuário. <a href="index.html">Para empresas</a></p>
+</footer>
+
+<script>
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }});
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+document.querySelectorAll('.faq-q').forEach(q => {
+  q.addEventListener('click', () => {
+    const item = q.parentElement;
+    const a = item.querySelector('.faq-a');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.faq-a').style.maxHeight = '0';
+    });
+    if (!isOpen) {
+      item.classList.add('open');
+      a.style.maxHeight = a.scrollHeight + 'px';
+    }
+  });
+});
+</script>
+</body>
+</html>

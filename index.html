@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:">
+  <style>
+    * { margin: 0; padding: 0; }
+    html, body {
+      overflow: hidden;
+      background: transparent;
+      width: 480px;
+      height: 360px;
+    }
+    body { -webkit-app-region: drag; }
+    #canvas {
+      border-radius: 20px;
+      display: block;
+      width: 480px;
+      height: 360px;
+    }
+    #video { display: none; }
+    #dismiss-btn {
+      display: none;
+      position: absolute;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      -webkit-app-region: no-drag;
+      background: rgba(255,255,255,0.9);
+      color: #333;
+      border: none;
+      padding: 6px 20px;
+      border-radius: 12px;
+      font: bold 12px system-ui;
+      cursor: pointer;
+    }
+    #dismiss-btn:hover { background: #fff; }
+    #loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-family: system-ui;
+      font-size: 11px;
+      text-align: center;
+      background: rgba(0,0,0,0.6);
+      padding: 8px 14px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="loading" data-i18n="pill.loading">Loading models…</div>
+  <video id="video" autoplay playsinline></video>
+  <canvas id="canvas" width="480" height="360"></canvas>
+  <button id="dismiss-btn" data-i18n="pill.snooze">Snooze</button>
+  <script type="module" src="renderer.js"></script>
+</body>
+</html>

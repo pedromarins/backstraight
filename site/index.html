@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BackStraight — Monitoramento de Postura com IA</title>
+<meta name="description" content="Proteja sua equipe com monitoramento de postura em tempo real via IA. Compliance NR-17 e NR-1. 100% privado, 100% local. LGPD compliant.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --fg:#0a0a0f;
+  --fg-mid:#4a4a5a;
+  --fg-muted:#8a8a9a;
+  --bg:#faf9f7;
+  --bg-dark:#0a0a0f;
+  --accent:#667eea;
+  --accent2:#764ba2;
+  --green:#2ecc71;
+  --red:#e74c3c;
+  --orange:#f39c12;
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --glass:rgba(255,255,255,0.06);
+  --glass-border:rgba(255,255,255,0.1);
+}
+
+html{scroll-behavior:smooth;scroll-snap-type:y proximity}
+body{font-family:var(--sans);color:var(--fg);background:var(--bg);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ---- NAV ---- */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;transition:background .3s,backdrop-filter .3s}
+nav.scrolled{background:rgba(10,10,15,0.85);backdrop-filter:blur(20px)}
+.nav-logo{font-family:var(--serif);font-size:22px;color:#fff;text-decoration:none;letter-spacing:-0.5px}
+.nav-logo span{color:var(--accent);font-style:italic}
+.nav-cta{padding:10px 24px;border:1px solid rgba(255,255,255,0.25);border-radius:100px;color:#fff;text-decoration:none;font-size:13px;font-weight:500;letter-spacing:0.3px;transition:all .25s}
+.nav-cta:hover{background:var(--accent);border-color:var(--accent)}
+
+/* ---- SECTIONS ---- */
+section{min-height:100vh;scroll-snap-align:start;position:relative;display:flex;align-items:center;justify-content:center;padding:100px 48px}
+@media(max-width:768px){section{padding:80px 24px}nav{padding:16px 24px}}
+
+/* ---- REVEAL ANIMATION ---- */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-d1{transition-delay:.1s}.reveal-d2{transition-delay:.2s}.reveal-d3{transition-delay:.3s}.reveal-d4{transition-delay:.4s}.reveal-d5{transition-delay:.5s}
+
+/* ---- HERO ---- */
+.hero{background:var(--bg-dark);flex-direction:column;text-align:center;gap:32px;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(102,126,234,0.15),transparent),radial-gradient(ellipse 60% 50% at 70% 70%,rgba(118,75,162,0.1),transparent)}
+.hero-kicker{font-size:13px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--accent);position:relative}
+.hero h1{font-family:var(--serif);font-size:clamp(40px,7vw,88px);line-height:1.05;color:#fff;max-width:900px;position:relative;letter-spacing:-1px}
+.hero h1 em{font-style:italic;color:var(--accent);position:relative}
+.hero h1 em::after{content:'';position:absolute;bottom:4px;left:0;right:0;height:3px;background:var(--accent);border-radius:2px;opacity:.5}
+.hero-sub{font-size:clamp(16px,2vw,20px);color:rgba(255,255,255,0.55);max-width:560px;line-height:1.6;position:relative}
+.hero-cta{display:inline-flex;align-items:center;gap:10px;padding:16px 36px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;text-decoration:none;border-radius:100px;font-size:15px;font-weight:600;letter-spacing:0.2px;position:relative;transition:transform .25s,box-shadow .25s}
+.hero-cta:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(102,126,234,0.4)}
+.hero-cta svg{width:18px;height:18px}
+.hero-badge{margin-top:16px;font-size:12px;color:rgba(255,255,255,0.35);position:relative;letter-spacing:0.5px}
+.hero-badge strong{color:var(--red);font-weight:600}
+
+/* ---- PROBLEM ---- */
+.problem{background:var(--bg);flex-direction:column;gap:60px}
+.section-header{text-align:center;max-width:700px}
+.section-kicker{font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+.section-title{font-family:var(--serif);font-size:clamp(32px,5vw,56px);line-height:1.1;letter-spacing:-0.5px;color:var(--fg)}
+.section-title em{font-style:italic;color:var(--accent)}
+.section-sub{margin-top:16px;font-size:17px;color:var(--fg-mid);line-height:1.6}
+
+.problem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1100px;width:100%}
+@media(max-width:900px){.problem-grid{grid-template-columns:1fr}}
+.problem-card{background:#fff;border-radius:20px;padding:36px 32px;border:1px solid rgba(0,0,0,0.06);transition:transform .3s,box-shadow .3s}
+.problem-card:hover{transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.08)}
+.problem-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:20px}
+.problem-card:nth-child(1) .problem-icon{background:rgba(231,76,60,0.1);color:var(--red)}
+.problem-card:nth-child(2) .problem-icon{background:rgba(243,156,18,0.1);color:var(--orange)}
+.problem-card:nth-child(3) .problem-icon{background:rgba(102,126,234,0.1);color:var(--accent)}
+.problem-card h3{font-family:var(--serif);font-size:22px;margin-bottom:10px;letter-spacing:-0.3px}
+.problem-card p{font-size:14px;color:var(--fg-mid);line-height:1.65}
+.problem-card .stat{font-family:var(--serif);font-size:clamp(48px,6vw,64px);color:var(--fg);margin-top:20px;letter-spacing:-2px;line-height:1}
+.problem-card .stat-label{font-size:12px;color:var(--fg-muted);margin-top:4px}
+
+/* ---- SOLUTION ---- */
+.solution{background:var(--bg-dark);color:#fff;flex-direction:column;gap:60px}
+.solution .section-title{color:#fff}
+.solution .section-sub{color:rgba(255,255,255,0.5)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;max-width:1000px;width:100%;position:relative}
+@media(max-width:900px){.steps{grid-template-columns:1fr;gap:24px}}
+.step-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:36px 28px;text-align:center;backdrop-filter:blur(10px)}
+.step-num{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;margin-bottom:16px}
+.step-card h3{font-family:var(--serif);font-size:20px;margin-bottom:8px}
+.step-card p{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6}
+.checks-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:700px;margin-top:8px}
+.check-tag{padding:8px 16px;border-radius:100px;background:var(--glass);border:1px solid var(--glass-border);font-size:12px;font-weight:500;color:rgba(255,255,255,0.7);backdrop-filter:blur(10px)}
+
+/* ---- FEATURES ---- */
+.features{background:var(--bg);flex-direction:column;gap:60px}
+.features-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:900px;width:100%}
+@media(max-width:768px){.features-grid{grid-template-columns:1fr}}
+.feature-card{background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:18px;padding:28px 28px;display:flex;gap:16px;align-items:flex-start;transition:transform .3s,box-shadow .3s}
+.feature-card:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,0.06)}
+.feature-icon{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;color:#fff}
+.feature-card h3{font-size:15px;font-weight:600;margin-bottom:4px;letter-spacing:-0.2px}
+.feature-card p{font-size:13px;color:var(--fg-mid);line-height:1.55}
+
+/* ---- EVIDENCE ---- */
+.evidence{background:var(--bg-dark);color:#fff;flex-direction:column;gap:60px}
+.evidence .section-title{color:#fff}
+.evidence .section-sub{color:rgba(255,255,255,0.5)}
+.evidence-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;max-width:1100px;width:100%}
+@media(max-width:900px){.evidence-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.evidence-grid{grid-template-columns:1fr}}
+.evidence-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:32px 24px;text-align:center;backdrop-filter:blur(10px)}
+.evidence-num{font-family:var(--serif);font-size:clamp(52px,7vw,72px);letter-spacing:-2px;line-height:1;background:linear-gradient(135deg,var(--accent),#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.evidence-card h4{font-size:14px;font-weight:500;color:rgba(255,255,255,0.7);margin-top:8px;line-height:1.4}
+.evidence-card .source{font-size:11px;color:rgba(255,255,255,0.3);margin-top:12px;font-style:italic}
+
+/* ---- PRIVACY ---- */
+.privacy{background:var(--bg);flex-direction:column;gap:48px}
+.privacy-flow{display:flex;align-items:center;gap:20px;max-width:800px;flex-wrap:wrap;justify-content:center}
+.flow-node{background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:18px;padding:24px 28px;text-align:center;min-width:160px}
+.flow-node h4{font-size:14px;font-weight:600;margin-bottom:4px}
+.flow-node p{font-size:12px;color:var(--fg-muted)}
+.flow-node.blocked{border-color:rgba(231,76,60,0.3);background:rgba(231,76,60,0.03)}
+.flow-node.blocked h4{color:var(--red)}
+.flow-arrow{font-size:24px;color:var(--accent);font-weight:300}
+.flow-arrow.blocked{color:var(--red)}
+.privacy-badges{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.priv-badge{padding:10px 20px;border-radius:100px;background:#fff;border:1px solid rgba(0,0,0,0.06);font-size:13px;font-weight:500;color:var(--fg);display:flex;align-items:center;gap:8px}
+.priv-badge .dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+
+/* ---- COMPLIANCE ---- */
+.compliance{background:linear-gradient(135deg,#0f0c29,#1a1145,#24243e);color:#fff;flex-direction:column;gap:48px}
+.compliance .section-title{color:#fff}
+.compliance .section-sub{color:rgba(255,255,255,0.5)}
+.compliance-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:900px;width:100%}
+@media(max-width:768px){.compliance-grid{grid-template-columns:1fr}}
+.compliance-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:28px;backdrop-filter:blur(10px)}
+.compliance-card .tag{display:inline-block;padding:4px 12px;border-radius:100px;font-size:11px;font-weight:600;letter-spacing:0.5px;margin-bottom:12px}
+.compliance-card:nth-child(odd) .tag{background:rgba(102,126,234,0.2);color:var(--accent)}
+.compliance-card:nth-child(even) .tag{background:rgba(46,204,113,0.15);color:var(--green)}
+.compliance-card h3{font-family:var(--serif);font-size:20px;margin-bottom:8px}
+.compliance-card p{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6}
+.compliance-alert{background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.2);border-radius:14px;padding:20px 28px;max-width:900px;text-align:center;width:100%}
+.compliance-alert p{font-size:14px;color:rgba(255,255,255,0.7)}
+.compliance-alert strong{color:var(--red)}
+
+/* ---- CONSULTANTS ---- */
+.consultants{background:var(--bg);flex-direction:column;gap:48px}
+.consultant-benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:900px;width:100%}
+@media(max-width:768px){.consultant-benefits{grid-template-columns:1fr}}
+.con-card{background:linear-gradient(135deg,rgba(102,126,234,0.04),rgba(118,75,162,0.04));border:1px solid rgba(102,126,234,0.1);border-radius:18px;padding:28px 24px;text-align:center}
+.con-card .con-icon{font-size:32px;margin-bottom:12px}
+.con-card h3{font-family:var(--serif);font-size:18px;margin-bottom:8px}
+.con-card p{font-size:13px;color:var(--fg-mid);line-height:1.55}
+
+/* ---- FAQ ---- */
+.faq{background:var(--bg-dark);color:#fff;flex-direction:column;gap:48px}
+.faq .section-title{color:#fff}
+.faq-list{max-width:760px;width:100%;display:flex;flex-direction:column;gap:8px}
+.faq-item{border:1px solid rgba(255,255,255,0.08);border-radius:14px;overflow:hidden;background:rgba(255,255,255,0.03)}
+.faq-q{padding:20px 24px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:15px;font-weight:500;transition:background .2s;user-select:none}
+.faq-q:hover{background:rgba(255,255,255,0.04)}
+.faq-q .arrow{font-size:18px;color:var(--accent);transition:transform .3s;flex-shrink:0;margin-left:16px}
+.faq-item.open .faq-q .arrow{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.16,1,.3,1),padding .3s}
+.faq-a-inner{padding:0 24px 20px;font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
+
+/* ---- CONTACT ---- */
+.contact{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;flex-direction:column;gap:36px;text-align:center}
+.contact .section-title{color:#fff}
+.contact .section-sub{color:rgba(255,255,255,0.7)}
+.contact-actions{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+.contact-btn{padding:16px 36px;border-radius:100px;font-size:15px;font-weight:600;text-decoration:none;transition:all .25s;letter-spacing:0.2px}
+.contact-btn.primary{background:#fff;color:var(--accent)}
+.contact-btn.primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,0.2)}
+.contact-btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.4);color:#fff}
+.contact-btn.secondary:hover{background:rgba(255,255,255,0.1)}
+.contact-info{font-size:14px;color:rgba(255,255,255,0.6);margin-top:8px}
+
+/* ---- FOOTER ---- */
+footer{background:var(--bg-dark);color:rgba(255,255,255,0.3);text-align:center;padding:32px 48px;font-size:12px;border-top:1px solid rgba(255,255,255,0.06)}
+footer a{color:var(--accent);text-decoration:none}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">Back<span>Straight</span></a>
+  <div style="display:flex;align-items:center;gap:20px">
+    <a href="consultores.html" style="color:rgba(255,255,255,0.6);text-decoration:none;font-size:13px;font-weight:500;transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.6)'">Para consultores</a>
+    <a href="#contato" class="nav-cta">Fale conosco</a>
+  </div>
+</nav>
+
+<!-- 1. HERO -->
+<section class="hero" id="inicio">
+  <span class="hero-kicker reveal">Monitoramento de postura baseado em ciência</span>
+  <h1 class="reveal reveal-d1">Sua equipe protegida.<br>Sua empresa em <em>conformidade</em>.</h1>
+  <p class="hero-sub reveal reveal-d2">Inteligência artificial baseada em evidências científicas monitora a postura da sua equipe via webcam, 100% no dispositivo do colaborador. Alertas em tempo real, relatórios automáticos e documentação para NR-17.</p>
+  <a href="#contato" class="hero-cta reveal reveal-d3">
+    Fale com um especialista
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  </a>
+  <p class="hero-badge reveal reveal-d4">NR-1 entra em vigor em <strong>maio de 2026</strong> &mdash; sua empresa está preparada?</p>
+</section>
+
+<!-- 2. PROBLEM -->
+<section class="problem" id="problema">
+  <div class="section-header reveal">
+    <div class="section-kicker">O problema</div>
+    <h2 class="section-title">A dor lombar é a principal causa de <em>incapacidade</em> no mundo</h2>
+    <p class="section-sub">E sua empresa paga a conta &mdash; em absenteísmo, presenteísmo, processos trabalhistas e multas por não-conformidade.</p>
+  </div>
+  <div class="problem-grid">
+    <div class="problem-card reveal reveal-d1">
+      <div class="problem-icon">&#9888;</div>
+      <h3>Impacto na saúde</h3>
+      <p>A má postura prolongada causa dor crônica, LER/DORT e afastamentos. Os sintomas são silenciosos até se tornarem irreversíveis.</p>
+      <div class="stat">80%</div>
+      <div class="stat-label">dos adultos desenvolverão dor lombar &mdash; The Lancet</div>
+    </div>
+    <div class="problem-card reveal reveal-d2">
+      <div class="problem-icon">&#9201;</div>
+      <h3>Custo para a empresa</h3>
+      <p>Colaboradores com dor produzem menos, faltam mais e geram custos com plano de saúde e substituições.</p>
+      <div class="stat">24%</div>
+      <div class="stat-label">aumento no risco de mortalidade precoce por tempo sentado &mdash; Annals of Internal Medicine</div>
+    </div>
+    <div class="problem-card reveal reveal-d3">
+      <div class="problem-icon">&#9878;</div>
+      <h3>Risco regulatório</h3>
+      <p>A NR-17 exige monitoramento ergonômico. A NR-1 agora inclui riscos psicossociais. O não-cumprimento gera multas e ações judiciais.</p>
+      <div class="stat">R$ 6.708</div>
+      <div class="stat-label">multa máxima por não-conformidade com a NR-17</div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. SOLUTION -->
+<section class="solution" id="como-funciona">
+  <div class="section-header reveal">
+    <div class="section-kicker">A solução</div>
+    <h2 class="section-title">Três passos para proteger sua equipe</h2>
+    <p class="section-sub">O BackStraight usa a webcam do computador e inteligência artificial para aprender a postura <em>individual</em> de cada colaborador.</p>
+  </div>
+  <div class="steps">
+    <div class="step-card reveal reveal-d1">
+      <div class="step-num">1</div>
+      <h3>Instale</h3>
+      <p>Aplicativo desktop leve para macOS e Windows. Sem dependências externas, sem servidores.</p>
+    </div>
+    <div class="step-card reveal reveal-d2">
+      <div class="step-num">2</div>
+      <h3>Calibre em 2 minutos</h3>
+      <p>A IA aprende a postura ideal de cada pessoa &mdash; seu corpo, sua cadeira, sua mesa. Nada genérico.</p>
+    </div>
+    <div class="step-card reveal reveal-d3">
+      <div class="step-num">3</div>
+      <h3>Monitore continuamente</h3>
+      <p>O sistema analisa mais de uma dezena de pontos &mdash; postura, pausas, tempo sentado, produtividade e bem-estar &mdash; em tempo real.</p>
+    </div>
+  </div>
+  <div class="checks-row reveal reveal-d4">
+    <span class="check-tag">&#128065; Nível dos olhos</span>
+    <span class="check-tag">&#129504; Cabeça à frente</span>
+    <span class="check-tag">&#128170; Ombros</span>
+    <span class="check-tag">&#128207; Distância da tela</span>
+    <span class="check-tag">&#128260; Rotação do corpo</span>
+    <span class="check-tag">&#9995; Mão na cabeça</span>
+    <span class="check-tag">&#9201; Tempo sentado</span>
+    <span class="check-tag">&#128694; Lembretes de pausa</span>
+    <span class="check-tag">&#127769; Hora de parar</span>
+    <span class="check-tag">&#128202; Relatórios de evolução</span>
+    <span class="check-tag">&#128196; Exportação PDF</span>
+    <span class="check-tag">&#128337; Score de postura diário</span>
+  </div>
+</section>
+
+<!-- 4. FEATURES -->
+<section class="features" id="funcionalidades">
+  <div class="section-header reveal">
+    <div class="section-kicker">Funcionalidades</div>
+    <h2 class="section-title">Tudo que sua equipe precisa em <em>uma ferramenta</em></h2>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card reveal reveal-d1">
+      <div class="feature-icon">&#128276;</div>
+      <div>
+        <h3>Alertas em tempo real</h3>
+        <p>Notificação visual discreta quando a postura precisa de correção. Não intrusivo, não interrompe o fluxo de trabalho.</p>
+      </div>
+    </div>
+    <div class="feature-card reveal reveal-d2">
+      <div class="feature-icon">&#9201;</div>
+      <div>
+        <h3>Lembretes de pausa</h3>
+        <p>Science-based: o British Journal of Sports Medicine recomenda pausas a cada 30-60 min. Reduz 24% do risco associado ao sedentarismo e aumenta a produtividade.</p>
+      </div>
+    </div>
+    <div class="feature-card reveal reveal-d3">
+      <div class="feature-icon">&#127769;</div>
+      <div>
+        <h3>Encerramento do dia</h3>
+        <p>Alerta no horário configurado. A National Sleep Foundation mostra que limites claros de horário reduzem burnout em 40% e protegem a qualidade do sono.</p>
+      </div>
+    </div>
+    <div class="feature-card reveal reveal-d4">
+      <div class="feature-icon">&#128202;</div>
+      <div>
+        <h3>Relatórios completos</h3>
+        <p>Visão diária, semanal e mensal com percentual de postura correta, alertas, tempo sentado e gráficos detalhados.</p>
+      </div>
+    </div>
+    <div class="feature-card reveal reveal-d5">
+      <div class="feature-icon">&#128196;</div>
+      <div>
+        <h3>Exportação PDF</h3>
+        <p>Relatórios profissionais em PDF para documentação de compliance, AET e AEP. Pronto para o consultor apresentar ao RH.</p>
+      </div>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">&#127760;</div>
+      <div>
+        <h3>Português e Inglês</h3>
+        <p>Interface completa em pt-BR e inglês. Pronto para operações multinacionais.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. EVIDENCE -->
+<section class="evidence" id="evidencias">
+  <div class="section-header reveal">
+    <div class="section-kicker">Evidências</div>
+    <h2 class="section-title">Números baseados em <em>evidência</em></h2>
+  </div>
+  <div class="evidence-grid">
+    <div class="evidence-card reveal reveal-d1">
+      <div class="evidence-num">80%</div>
+      <h4>dos adultos desenvolverão dor lombar ao longo da vida</h4>
+      <div class="source">The Lancet, 2018</div>
+    </div>
+    <div class="evidence-card reveal reveal-d2">
+      <div class="evidence-num">12+</div>
+      <h4>pontos de análise contínua de saúde e postura</h4>
+      <div class="source">Postura, pausas, tempo sentado, produtividade, bem-estar</div>
+    </div>
+    <div class="evidence-card reveal reveal-d3">
+      <div class="evidence-num">100%</div>
+      <h4>local &mdash; nenhuma imagem sai do dispositivo</h4>
+      <div class="source">Compliance total com a LGPD</div>
+    </div>
+    <div class="evidence-card reveal reveal-d4">
+      <div class="evidence-num">2min</div>
+      <h4>para calibrar e começar a monitorar</h4>
+      <div class="source">Sem treinamento, sem hardware extra</div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. PRIVACY -->
+<section class="privacy" id="privacidade">
+  <div class="section-header reveal">
+    <div class="section-kicker">Privacidade</div>
+    <h2 class="section-title">Seus dados nunca saem do <em>dispositivo</em></h2>
+    <p class="section-sub">Toda a inteligência artificial roda localmente. Nenhuma imagem é enviada, armazenada ou compartilhada. Nunca.</p>
+  </div>
+  <div class="privacy-flow reveal">
+    <div class="flow-node">
+      <h4>&#127909; Webcam</h4>
+      <p>Captura em tempo real</p>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-node">
+      <h4>&#128187; Seu dispositivo</h4>
+      <p>IA processa localmente</p>
+    </div>
+    <div class="flow-arrow blocked">&rarr;&#10005;</div>
+    <div class="flow-node blocked">
+      <h4>&#9729; Nuvem</h4>
+      <p>Nada é enviado</p>
+    </div>
+  </div>
+  <div class="privacy-badges reveal reveal-d2">
+    <div class="priv-badge"><span class="dot"></span> Processamento 100% local</div>
+    <div class="priv-badge"><span class="dot"></span> Sem gravações salvas</div>
+    <div class="priv-badge"><span class="dot"></span> Câmera desliga ao pausar</div>
+    <div class="priv-badge"><span class="dot"></span> LGPD compliant</div>
+  </div>
+</section>
+
+<!-- 7. COMPLIANCE -->
+<section class="compliance" id="compliance">
+  <div class="section-header reveal">
+    <div class="section-kicker">Compliance</div>
+    <h2 class="section-title">NR-17 e NR-1: o BackStraight cobre cada requisito</h2>
+  </div>
+  <div class="compliance-grid">
+    <div class="compliance-card reveal reveal-d1">
+      <div class="tag">NR-17</div>
+      <h3>Avaliação Ergonômica Preliminar</h3>
+      <p>A AEP exige identificação de riscos posturais. O BackStraight monitora continuamente mais de uma dezena de pontos &mdash; postura, pausas, tempo sentado e bem-estar &mdash; gerando dados objetivos para a avaliação.</p>
+    </div>
+    <div class="compliance-card reveal reveal-d2">
+      <div class="tag">NR-17</div>
+      <h3>Análise Ergonômica do Trabalho</h3>
+      <p>A AET exige dados detalhados. Relatórios diários, semanais e mensais com percentuais, gráficos e histórico exportável em PDF.</p>
+    </div>
+    <div class="compliance-card reveal reveal-d3">
+      <div class="tag">NR-1</div>
+      <h3>Riscos Psicossociais</h3>
+      <p>A NR-1 integra riscos psicossociais ao GRO. Lembretes de pausa e encerramento do dia ajudam a prevenir burnout e fadiga crônica.</p>
+    </div>
+    <div class="compliance-card reveal reveal-d4">
+      <div class="tag">NR-1</div>
+      <h3>Gerenciamento de Riscos</h3>
+      <p>O GRO exige medidas de prevenção documentadas. PDFs exportáveis servem como evidência de que a empresa adotou medidas ativas de proteção.</p>
+    </div>
+  </div>
+  <div class="compliance-alert reveal reveal-d5">
+    <p>A NR-1 entra em vigor em <strong>26 de maio de 2026</strong>. Empresas que não se adequarem estarão sujeitas a fiscalização e multas a partir desta data.</p>
+  </div>
+</section>
+
+<!-- 8. FAQ -->
+<section class="faq" id="faq">
+  <div class="section-header reveal">
+    <div class="section-kicker">Perguntas frequentes</div>
+    <h2 class="section-title" style="color:#fff">Tire suas dúvidas</h2>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item reveal">
+      <div class="faq-q">Como o BackStraight monitora a postura? <span class="arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner">O BackStraight usa a webcam do computador e inteligência artificial para analisar mais de uma dezena de pontos: nível dos olhos, posição da cabeça, ombros, distância da tela, rotação do corpo, apoio da mão, tempo sentado, intervalos de pausa, horário de encerramento e evolução ao longo do tempo com relatórios diários, semanais e mensais &mdash; tudo processado localmente, sem envio de dados.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">Meus dados de câmera são privados? <span class="arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Sim. Tudo roda 100% no dispositivo do colaborador. Nenhuma imagem ou vídeo é enviado para qualquer servidor. Nenhuma gravação é salva. Quando o monitoramento é pausado, a câmera desliga completamente. Compliance total com a LGPD.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">O BackStraight ajuda no compliance com a NR-17? <span class="arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Sim. O BackStraight gera dados objetivos de monitoramento postural que apoiam a AEP (Avaliação Ergonômica Preliminar) e a AET (Análise Ergonômica do Trabalho). Os relatórios em PDF servem como documentação de que a empresa adotou medidas ativas de prevenção ergonômica.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">Qual a relação com a NR-1? <span class="arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner">A NR-1 passa a exigir a inclusão de riscos psicossociais no Gerenciamento de Riscos Ocupacionais (GRO) a partir de maio de 2026, integrada com a NR-17. O BackStraight contribui com lembretes de pausa (prevenção de sedentarismo), alerta de encerramento do dia (prevenção de burnout) e monitoramento contínuo documentado.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">Como funciona a calibração? <span class="arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner">O colaborador senta com boa postura e o sistema captura a referência pessoal em aproximadamente 5 segundos. Depois, valida detectando quando a postura piora. Os limites são calculados como desvios da referência individual &mdash; não de médias populacionais genéricas. Leva menos de 2 minutos.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">Funciona no Windows e macOS? <span class="arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Sim. O BackStraight é construído com Electron e funciona em macOS e Windows. A câmera e os modelos de IA usam padrões web (MediaPipe) que funcionam em ambas as plataformas. Necessita apenas de uma webcam.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">Quanto de CPU o aplicativo usa? <span class="arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner">O BackStraight executa 3 modelos de IA (rosto, corpo e mãos). No modo inativo, usa aproximadamente 2,5 detecções por segundo com impacto mínimo na CPU. Quando detecta um problema de postura, aumenta para feedback em tempo real. Não interfere no trabalho do colaborador.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">Qual o modelo de licenciamento? <span class="arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Oferecemos planos corporativos por colaborador com assinatura mensal. Para valores e condições especiais para consultores, entre em contato com nossa equipe.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">Os relatórios podem ser exportados? <span class="arrow">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Sim. Relatórios semanais e mensais podem ser exportados em PDF com layout profissional, incluindo métricas de score de postura, alertas, tempo sentado, gráficos e detalhamento semanal. Ideal para documentação de compliance e apresentações ao SESMT.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10. CONTACT -->
+<section class="contact" id="contato">
+  <div class="section-header reveal">
+    <div class="section-kicker" style="color:rgba(255,255,255,0.6)">Vamos conversar</div>
+    <h2 class="section-title">Pronto para proteger sua equipe?</h2>
+    <p class="section-sub">Solicite uma demonstração ou fale com nossa equipe sobre planos corporativos e parcerias para consultores.</p>
+  </div>
+  <div class="contact-actions reveal reveal-d1">
+    <a href="https://wa.me/5521992959087?text=Ol%C3%A1%2C%20quero%20agendar%20uma%20demonstra%C3%A7%C3%A3o%20do%20BackStraight%20para%20a%20minha%20empresa." class="contact-btn primary" target="_blank">Solicitar demonstração</a>
+    <a href="https://wa.me/5521992959087?text=Ol%C3%A1%2C%20gostaria%20de%20conhecer%20os%20planos%20corporativos%20do%20BackStraight." class="contact-btn secondary" target="_blank">Planos corporativos</a>
+  </div>
+  <p class="contact-info reveal reveal-d2">WhatsApp: +55 21 99295-9087</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>&copy; 2026 BackStraight. Todos os dados sao processados e armazenados localmente no dispositivo do usuario.</p>
+</footer>
+
+<script>
+// Scroll reveal
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }});
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// Nav background on scroll
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+// FAQ accordion
+document.querySelectorAll('.faq-q').forEach(q => {
+  q.addEventListener('click', () => {
+    const item = q.parentElement;
+    const a = item.querySelector('.faq-a');
+    const isOpen = item.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.faq-item.open').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.faq-a').style.maxHeight = '0';
+    });
+    if (!isOpen) {
+      item.classList.add('open');
+      a.style.maxHeight = a.scrollHeight + 'px';
+    }
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "backstraight",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/posture.test.mjs test/stats-collector.test.mjs",
+    "test:site": "node --test test/site.test.mjs",
+    "test:e2e": "node --test test/app.test.mjs",
+    "test:all": "node --test test/posture.test.mjs test/stats-collector.test.mjs test/site.test.mjs test/app.test.mjs",
+    "pack": "electron-packager . BackStraight --platform=darwin --arch=universal --out=dist --overwrite --ignore=test --ignore=.gitignore --icon=assets/icon.icns --extend-info=assets/extend-info.plist",
+    "pack:win": "electron-packager . BackStraight --platform=win32 --arch=x64 --out=dist --overwrite --ignore=test --ignore=.gitignore --icon=assets/icon.ico",
+    "pack:all": "npm run pack && npm run pack:win"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-packager": "^17.1.2"
+  }
+}
