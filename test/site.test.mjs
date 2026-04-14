@@ -5,7 +5,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const siteDir = join(__dirname, '..', 'site');
+const siteDir = join(__dirname, '..', 'docs');
 
 let indexHtml, consultoresHtml;
 
