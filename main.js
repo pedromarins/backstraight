@@ -411,9 +411,9 @@ app.whenReady().then(async () => {
       margins: { top: 0, bottom: 0, left: 0, right: 0 },
     });
 
-    const typeLabel = payload.type === 'weekly' ? 'Weekly' : 'Monthly';
+    const typeLabel = payload.type === 'weekly' ? 'Semanal' : 'Mensal';
     const dateLabel = payload.type === 'weekly' ? payload.period.start : payload.period.start.slice(0, 7);
-    const defaultName = `BackStraight-${typeLabel}-${dateLabel}.pdf`;
+    const defaultName = `SeuCuidado-${typeLabel}-${dateLabel}.pdf`;
 
     const { filePath, canceled } = await dialog.showSaveDialog(reportWin || undefined, {
       defaultPath: defaultName,
