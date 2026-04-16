@@ -63,6 +63,13 @@ section{min-height:100vh;scroll-snap-align:start;position:relative;display:flex;
 .section-title em{font-style:italic;color:var(--accent)}
 .section-sub{margin-top:16px;font-size:17px;color:var(--fg-mid);line-height:1.6}
 
+/* Demo */
+.demo{background:var(--bg-dark);min-height:auto;padding:0 48px 80px;scroll-snap-align:none}
+.demo-content{max-width:800px;margin:0 auto;text-align:center}
+.demo-video{width:100%;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.08);display:block}
+.demo-caption{margin-top:16px;font-size:13px;color:rgba(255,255,255,0.4)}
+.demo-placeholder{width:100%;aspect-ratio:4/3;border:2px dashed rgba(255,255,255,0.12);border-radius:20px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.2);font-size:15px}
+
 /* Opportunity cards */
 .opportunity{background:var(--bg);flex-direction:column;gap:60px}
 .opp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1100px;width:100%}
@@ -173,6 +180,17 @@ footer a{color:var(--accent);text-decoration:none}
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
   </a>
   <p class="hero-badge reveal reveal-d4">Modelo de parceria com <strong>receita recorrente mensal</strong></p>
+</section>
+
+<!-- DEMO -->
+<section class="demo" id="demo">
+  <div class="demo-content reveal">
+    <!--<video autoplay muted loop playsinline class="demo-video">
+      <source src="demo.mp4" type="video/mp4">
+    </video>-->
+    <div class="demo-placeholder">Veja o SeuCuidado em ação — demo em breve</div>
+    <p class="demo-caption">A ferramenta que seus clientes vão usar no dia a dia</p>
+  </div>
 </section>
 
 <!-- 2. OPPORTUNITY -->

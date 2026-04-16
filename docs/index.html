@@ -61,6 +61,13 @@ section{min-height:100vh;scroll-snap-align:start;position:relative;display:flex;
 .hero-badge{margin-top:16px;font-size:12px;color:rgba(255,255,255,0.35);position:relative;letter-spacing:0.5px}
 .hero-badge strong{color:var(--red);font-weight:600}
 
+/* ---- DEMO ---- */
+.demo{background:var(--bg-dark);min-height:auto;padding:0 48px 80px;scroll-snap-align:none}
+.demo-content{max-width:800px;margin:0 auto;text-align:center}
+.demo-video{width:100%;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.08);display:block}
+.demo-caption{margin-top:16px;font-size:13px;color:rgba(255,255,255,0.4)}
+.demo-placeholder{width:100%;aspect-ratio:4/3;border:2px dashed rgba(255,255,255,0.12);border-radius:20px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.2);font-size:15px}
+
 /* ---- PROBLEM ---- */
 .problem{background:var(--bg);flex-direction:column;gap:60px}
 .section-header{text-align:center;max-width:700px}
@@ -206,6 +213,17 @@ footer a{color:var(--accent);text-decoration:none}
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
   </a>
   <p class="hero-badge reveal reveal-d4">NR-1 entra em vigor em <strong>maio de 2026</strong> &mdash; sua empresa está preparada?</p>
+</section>
+
+<!-- DEMO -->
+<section class="demo" id="demo">
+  <div class="demo-content reveal">
+    <!--<video autoplay muted loop playsinline class="demo-video">
+      <source src="demo.mp4" type="video/mp4">
+    </video>-->
+    <div class="demo-placeholder">Veja o SeuCuidado em ação — demo em breve</div>
+    <p class="demo-caption">Monitoramento de postura em tempo real via webcam com IA</p>
+  </div>
 </section>
 
 <!-- 2. PROBLEM -->
