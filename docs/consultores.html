@@ -189,26 +189,7 @@ footer a{color:var(--accent);text-decoration:none}
     <p class="demo-caption">A ferramenta que seus clientes vão usar no dia a dia</p>
   </div>
 </section>
-<script>
-(function(){
-const C=document.getElementById('demo-canvas'),X=C.getContext('2d'),W=480,H=360;
-const good={leftEye:{x:0.42,y:0.32},rightEye:{x:0.58,y:0.32},leftShoulder:{x:0.32,y:0.58},rightShoulder:{x:0.68,y:0.58},head:{x:0.50,y:0.24},neck:{x:0.50,y:0.46}};
-const bad={leftEye:{x:0.40,y:0.30},rightEye:{x:0.57,y:0.35},leftShoulder:{x:0.30,y:0.56},rightShoulder:{x:0.66,y:0.62},head:{x:0.48,y:0.27},neck:{x:0.49,y:0.46}};
-const CYCLE=12000;
-const phases=[{start:0,end:4000,state:'good'},{start:4000,end:4500,state:'transition'},{start:4500,end:9500,state:'bad'},{start:9500,end:10000,state:'transition'},{start:10000,end:12000,state:'good'}];
-function lerp(a,b,t){return{x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t};}
-function getPhase(ms){const t=ms%CYCLE;for(const p of phases)if(t>=p.start&&t<p.end)return p;return phases[0];}
-function getPose(ms){const t=ms%CYCLE;const phase=getPhase(ms);if(phase.state==='good')return{pose:good,allOk:true};if(phase.state==='bad')return{pose:bad,allOk:false};const prev=phases[phases.indexOf(phase)-1];const frac=(t-phase.start)/(phase.end-phase.start);const fromGood=prev.state==='good';const from=fromGood?good:bad;const to=fromGood?bad:good;const p={};for(const k of Object.keys(from))p[k]=lerp(from[k],to[k],frac);return{pose:p,allOk:!fromGood};}
-function toC(pt){return{x:(1-pt.x)*W,y:pt.y*H};}
-function drawLine(a,b,ok){const p1=toC(a),p2=toC(b);const color=ok?'#00ff44':'#ff3333';X.beginPath();X.strokeStyle=color;X.lineWidth=2;X.lineCap='round';X.moveTo(p1.x,p1.y);X.lineTo(p2.x,p2.y);X.stroke();for(const p of[p1,p2]){X.beginPath();X.fillStyle=color;X.arc(p.x,p.y,3,0,Math.PI*2);X.fill();}if(!ok){const hi=p1.y<p2.y?p1:p2,lo=p1.y<p2.y?p2:p1;X.beginPath();X.fillStyle=color;X.moveTo(hi.x,hi.y-14);X.lineTo(hi.x-5,hi.y-6);X.lineTo(hi.x+5,hi.y-6);X.fill();X.beginPath();X.moveTo(lo.x,lo.y+14);X.lineTo(lo.x-5,lo.y+6);X.lineTo(lo.x+5,lo.y+6);X.fill();}}
-function drawSilhouette(pose){const head=toC(pose.head),neck=toC(pose.neck),ls=toC(pose.leftShoulder),rs=toC(pose.rightShoulder);X.beginPath();X.arc(head.x,head.y,28,0,Math.PI*2);X.fillStyle='rgba(255,255,255,0.06)';X.fill();X.strokeStyle='rgba(255,255,255,0.12)';X.lineWidth=1.5;X.stroke();X.beginPath();X.moveTo(head.x,head.y+28);X.lineTo(neck.x,neck.y);X.strokeStyle='rgba(255,255,255,0.08)';X.lineWidth=8;X.stroke();X.beginPath();X.moveTo(ls.x,ls.y);X.lineTo(neck.x,neck.y);X.lineTo(rs.x,rs.y);X.strokeStyle='rgba(255,255,255,0.08)';X.lineWidth=8;X.lineCap='round';X.stroke();X.beginPath();X.moveTo(ls.x,ls.y);X.lineTo(ls.x-10,H-30);X.moveTo(rs.x,rs.y);X.lineTo(rs.x+10,H-30);X.strokeStyle='rgba(255,255,255,0.05)';X.lineWidth=8;X.stroke();}
-function drawHeadForwardWarning(now){const color='#ff3333';const cx=W/2,cy=30,sz=14;const pulse=0.7+0.3*Math.sin(now/300);X.globalAlpha=pulse;X.strokeStyle=color;X.lineWidth=2;X.lineCap='round';X.beginPath();X.moveTo(cx,cy+sz);X.lineTo(cx,cy-sz);X.stroke();X.beginPath();X.moveTo(cx,cy-sz);X.lineTo(cx-7,cy-sz+10);X.moveTo(cx,cy-sz);X.lineTo(cx+7,cy-sz+10);X.stroke();X.font='bold 10px system-ui';X.fillStyle=color;X.textAlign='center';X.textBaseline='top';X.fillText('ENDIREITE-SE',cx,cy+sz+4);X.globalAlpha=1;}
-function drawStatusBar(allOk){const barH=24,y=H-barH;X.fillStyle='rgba(0,0,0,0.6)';X.fillRect(0,y,W,barH);const items=['Olhos','Cabeça','Ombr','Dist','Giro','Mão'];const sw=W/items.length;X.font='9px system-ui';X.textAlign='center';X.textBaseline='middle';items.forEach((label,i)=>{const cx=sw*i+sw/2,cy=y+barH/2;const ok=allOk?true:(i<=2)?false:true;const color=ok?'#00ff44':'#ff3333';X.beginPath();X.fillStyle=color;X.arc(cx-14,cy,3.5,0,Math.PI*2);X.fill();X.fillStyle='#fff';X.fillText(label,cx+8,cy);});}
-function drawStats(now){X.fillStyle='rgba(0,0,0,0.5)';X.fillRect(0,0,100,16);X.font='9px monospace';X.textAlign='left';X.textBaseline='top';X.fillStyle='#aaa';X.fillText('12ms · 5d/s · '+(5+Math.floor(Math.sin(now/2000)*2))+'fps',4,3);}
-function frame(now){X.clearRect(0,0,W,H);X.fillStyle='#1a1a2e';X.fillRect(0,0,W,H);const g=X.createRadialGradient(W/2,H/2,0,W/2,H/2,W*0.6);g.addColorStop(0,'rgba(102,126,234,0.04)');g.addColorStop(1,'transparent');X.fillStyle=g;X.fillRect(0,0,W,H);const{pose,allOk}=getPose(now);drawSilhouette(pose);drawLine(pose.leftEye,pose.rightEye,allOk);drawLine(pose.leftShoulder,pose.rightShoulder,allOk);if(!allOk)drawHeadForwardWarning(now);drawStatusBar(allOk);drawStats(now);requestAnimationFrame(frame);}
-const obs=new IntersectionObserver((entries)=>{if(entries[0].isIntersecting){requestAnimationFrame(frame);obs.disconnect();}},{threshold:0.1});obs.observe(C);
-})();
-</script>
+<script src="demo-anim.js"></script>
 
 <!-- 2. OPPORTUNITY -->
 <section class="opportunity">
