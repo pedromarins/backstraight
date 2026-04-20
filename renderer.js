@@ -200,14 +200,17 @@ function toCanvas(pt) {
 }
 
 function drawArrow(p, dirY, color) {
-  const sz = 6;
+  const sz = 8;
   ctx.beginPath();
   ctx.fillStyle = color;
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 6;
   ctx.moveTo(p.x, p.y + sz * dirY);
   ctx.lineTo(p.x - sz * 0.6, p.y - sz * 0.4 * dirY);
   ctx.lineTo(p.x + sz * 0.6, p.y - sz * 0.4 * dirY);
   ctx.closePath();
   ctx.fill();
+  ctx.shadowBlur = 0;
 }
 
 function drawLine(a, b, ok) {
@@ -215,9 +218,12 @@ function drawLine(a, b, ok) {
   const p2 = toCanvas(b);
   const color = ok ? '#00ff44' : '#ff3333';
 
+  ctx.shadowColor = color;
+  ctx.shadowBlur = ok ? 8 : 14;
+
   ctx.beginPath();
   ctx.strokeStyle = color;
-  ctx.lineWidth = 1.5;
+  ctx.lineWidth = 2.5;
   ctx.lineCap = 'round';
   ctx.moveTo(p1.x, p1.y);
   ctx.lineTo(p2.x, p2.y);
@@ -226,15 +232,17 @@ function drawLine(a, b, ok) {
   for (const p of [p1, p2]) {
     ctx.beginPath();
     ctx.fillStyle = color;
-    ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
     ctx.fill();
   }
+
+  ctx.shadowBlur = 0;
 
   if (!ok) {
     const higher = p1.y < p2.y ? p1 : p2;
     const lower = p1.y < p2.y ? p2 : p1;
-    drawArrow({ x: higher.x, y: higher.y - 10 }, 1, color);
-    drawArrow({ x: lower.x, y: lower.y + 10 }, -1, color);
+    drawArrow({ x: higher.x, y: higher.y - 12 }, 1, color);
+    drawArrow({ x: lower.x, y: lower.y + 12 }, -1, color);
   }
 }
 
@@ -243,9 +251,11 @@ function drawHeadForward() {
   const color = '#ff3333';
   const cx = canvas.width / 2;
   const cy = 30;
-  const sz = 14;
+  const sz = 16;
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 12;
   ctx.strokeStyle = color;
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 2.5;
   ctx.lineCap = 'round';
   ctx.beginPath();
   ctx.moveTo(cx, cy + sz);
@@ -253,15 +263,16 @@ function drawHeadForward() {
   ctx.stroke();
   ctx.beginPath();
   ctx.moveTo(cx, cy - sz);
-  ctx.lineTo(cx - 7, cy - sz + 10);
+  ctx.lineTo(cx - 8, cy - sz + 11);
   ctx.moveTo(cx, cy - sz);
-  ctx.lineTo(cx + 7, cy - sz + 10);
+  ctx.lineTo(cx + 8, cy - sz + 11);
   ctx.stroke();
-  ctx.font = '10px system-ui';
+  ctx.font = 'bold 13px system-ui';
   ctx.fillStyle = color;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
-  ctx.fillText(t('pill.leanBack'), cx, cy + sz + 4);
+  ctx.fillText(t('pill.leanBack'), cx, cy + sz + 6);
+  ctx.shadowBlur = 0;
 }
 
 function drawDistanceWarning() {
@@ -269,20 +280,23 @@ function drawDistanceWarning() {
   const color = '#ff3333';
   const w = canvas.width;
   const h = canvas.height;
-  const sz = 20;
+  const sz = 24;
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 10;
   ctx.strokeStyle = color;
-  ctx.lineWidth = 2.5;
+  ctx.lineWidth = 3;
   ctx.lineCap = 'round';
   ctx.beginPath(); ctx.moveTo(sz, 4); ctx.lineTo(4, 4); ctx.lineTo(4, sz); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(w - sz, 4); ctx.lineTo(w - 4, 4); ctx.lineTo(w - 4, sz); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(sz, h - 4); ctx.lineTo(4, h - 4); ctx.lineTo(4, h - sz); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(w - sz, h - 4); ctx.lineTo(w - 4, h - 4); ctx.lineTo(w - 4, h - sz); ctx.stroke();
-  ctx.font = '10px system-ui';
+  ctx.font = 'bold 13px system-ui';
   ctx.fillStyle = color;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'bottom';
   const label = posture.tooClose ? t('pill.tooClose') : t('pill.tooFar');
-  ctx.fillText(label, w / 2, h - 28);
+  ctx.fillText(label, w / 2, h - 42);
+  ctx.shadowBlur = 0;
 }
 
 function drawTurnWarning() {
@@ -291,9 +305,11 @@ function drawTurnWarning() {
   const dir = posture.noseOffset > 0 ? 1 : -1;
   const cy = canvas.height / 2;
   const cx = dir > 0 ? canvas.width - 30 : 30;
-  const sz = 16;
+  const sz = 20;
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 10;
   ctx.strokeStyle = color;
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 2.5;
   ctx.lineCap = 'round';
   ctx.beginPath();
   ctx.moveTo(cx - sz * dir, cy);
@@ -301,86 +317,88 @@ function drawTurnWarning() {
   ctx.stroke();
   ctx.beginPath();
   ctx.moveTo(cx + sz * dir, cy);
-  ctx.lineTo(cx + sz * dir - 8 * dir, cy - 6);
+  ctx.lineTo(cx + sz * dir - 10 * dir, cy - 7);
   ctx.moveTo(cx + sz * dir, cy);
-  ctx.lineTo(cx + sz * dir - 8 * dir, cy + 6);
+  ctx.lineTo(cx + sz * dir - 10 * dir, cy + 7);
   ctx.stroke();
+  ctx.shadowBlur = 0;
 }
 
 function drawHandWarning() {
   if (!posture?.handNearHead) return;
   const color = '#ff3333';
-  // Show on the side where the hand is detected
-  const side = posture.handSide === 'left' ? 1 : -1; // mirrored
+  const side = posture.handSide === 'left' ? 1 : -1;
   const cx = side > 0 ? canvas.width - 40 : 40;
   const cy = canvas.height * 0.35;
-  // Hand icon: small palm shape
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 10;
   ctx.strokeStyle = color;
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 2.5;
   ctx.lineCap = 'round';
-  // Circle for palm
   ctx.beginPath();
-  ctx.arc(cx, cy, 10, 0, Math.PI * 2);
+  ctx.arc(cx, cy, 14, 0, Math.PI * 2);
   ctx.stroke();
-  // X through it (not allowed)
   ctx.beginPath();
-  ctx.moveTo(cx - 7, cy - 7);
-  ctx.lineTo(cx + 7, cy + 7);
-  ctx.moveTo(cx + 7, cy - 7);
-  ctx.lineTo(cx - 7, cy + 7);
+  ctx.moveTo(cx - 9, cy - 9);
+  ctx.lineTo(cx + 9, cy + 9);
+  ctx.moveTo(cx + 9, cy - 9);
+  ctx.lineTo(cx - 9, cy + 9);
   ctx.stroke();
-  // Label
-  ctx.font = '9px system-ui';
+  ctx.font = 'bold 10px system-ui';
   ctx.fillStyle = color;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
-  ctx.fillText(t('pill.hand'), cx, cy + 14);
+  ctx.fillText(t('pill.hand'), cx, cy + 18);
+  ctx.shadowBlur = 0;
 }
 
 function drawBreakAlert() {
   if (!breakAlert) return;
   const w = canvas.width;
   const h = canvas.height;
-  // Pulsing overlay
   const alpha = 0.3 + 0.15 * Math.sin(performance.now() / 400);
   ctx.fillStyle = `rgba(255, 180, 0, ${alpha})`;
   ctx.fillRect(0, 0, w, h);
-  // Message
-  ctx.font = 'bold 16px system-ui';
+  ctx.shadowColor = 'rgba(255,180,0,0.8)';
+  ctx.shadowBlur = 20;
+  ctx.font = 'bold 22px system-ui';
   ctx.fillStyle = '#fff';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(t('pill.standUp'), w / 2, h / 2 - 10);
-  ctx.font = '11px system-ui';
-  ctx.fillText(t('pill.timeForBreak'), w / 2, h / 2 + 12);
+  ctx.fillText(t('pill.standUp'), w / 2, h / 2 - 14);
+  ctx.shadowBlur = 0;
+  ctx.font = '13px system-ui';
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.fillText(t('pill.timeForBreak'), w / 2, h / 2 + 14);
 }
 
 function drawWindDownAlert() {
   if (!windDownAlert) return;
   const w = canvas.width;
   const h = canvas.height;
-  // Stronger pulsing overlay — deep red/purple
   const alpha = 0.5 + 0.2 * Math.sin(performance.now() / 300);
   ctx.fillStyle = `rgba(120, 30, 60, ${alpha})`;
   ctx.fillRect(0, 0, w, h);
-  // Message
-  ctx.font = 'bold 20px system-ui';
+  ctx.shadowColor = 'rgba(200,50,100,0.8)';
+  ctx.shadowBlur = 20;
+  ctx.font = 'bold 26px system-ui';
   ctx.fillStyle = '#fff';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(t('pill.timeToStop'), w / 2, h / 2 - 16);
-  ctx.font = '12px system-ui';
+  ctx.fillText(t('pill.timeToStop'), w / 2, h / 2 - 18);
+  ctx.shadowBlur = 0;
+  ctx.font = '14px system-ui';
   ctx.fillStyle = 'rgba(255,255,255,0.85)';
   const hh = String(config.windDownHour).padStart(2, '0');
   const mm = String(config.windDownMinute).padStart(2, '0');
-  ctx.fillText(t('pill.windDownMsg', { time: `${hh}:${mm}` }), w / 2, h / 2 + 10);
+  ctx.fillText(t('pill.windDownMsg', { time: `${hh}:${mm}` }), w / 2, h / 2 + 14);
 }
 
 function drawStatusBar() {
-  const barH = 22;
+  const barH = 36;
   const y = canvas.height - barH;
 
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
   ctx.fillRect(0, y, canvas.width, barH);
 
   const items = [
@@ -392,34 +410,41 @@ function drawStatusBar() {
     { label: t('pill.handLabel'), ok: posture?.handNearHead === undefined ? undefined : !posture.handNearHead },
   ];
 
-  const sw = canvas.width / items.length;
-  ctx.font = '8px system-ui';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
+  const count = items.length;
+  const badgeW = 68;
+  const badgeH = 22;
+  const gap = (canvas.width - badgeW * count) / (count + 1);
+  const badgeY = y + (barH - badgeH) / 2;
 
   items.forEach((item, i) => {
-    const cx = sw * i + sw / 2;
-    const cy = y + barH / 2;
-
+    const bx = gap + i * (badgeW + gap);
     const color = item.ok === undefined ? '#666' : item.ok ? '#00ff44' : '#ff3333';
+    const isOk = item.ok === undefined || item.ok;
+
+    // Badge background
+    ctx.fillStyle = isOk ? 'rgba(0,255,68,0.08)' : 'rgba(255,51,51,0.15)';
     ctx.beginPath();
-    ctx.fillStyle = color;
-    ctx.arc(cx - 12, cy, 3, 0, Math.PI * 2);
+    ctx.roundRect(bx, badgeY, badgeW, badgeH, 6);
     ctx.fill();
 
-    ctx.fillStyle = '#fff';
-    ctx.fillText(item.label, cx + 8, cy);
-  });
+    // Dot with glow
+    const dotX = bx + 12;
+    const dotY = badgeY + badgeH / 2;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 6;
+    ctx.beginPath();
+    ctx.fillStyle = color;
+    ctx.arc(dotX, dotY, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
 
-  // Stats overlay (top-left)
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-  ctx.fillRect(0, 0, 90, 14);
-  ctx.font = '9px monospace';
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'top';
-  ctx.fillStyle = '#aaa';
-  const fps = getTargetFps(pill.pillVisible);
-  ctx.fillText(`${stats.detectMs.toFixed(0)}ms · ${stats.detectsPerSec}d/s · ${fps}fps`, 4, 3);
+    // Label
+    ctx.font = '500 10px system-ui';
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(item.label, dotX + 10, dotY);
+  });
 }
 
 // --- Main loop ---

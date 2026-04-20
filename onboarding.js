@@ -99,16 +99,21 @@ function drawPreview(canvasId) {
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     ctx.restore();
 
-    // Draw landmarks if face detected
+    // Draw silhouette + landmarks if face detected
     const ts = performance.now();
     const faces = faceLandmarker.detectForVideo(video, ts);
+    let poseLm = null;
+    if (poseLandmarker) {
+      const poses = poseLandmarker.detectForVideo(video, ts + 1);
+      if (poses.landmarks?.length) poseLm = poses.landmarks[0];
+    }
     if (faces.faceLandmarks?.length) {
       const lm = faces.faceLandmarks[0];
+      drawSilhouetteGuide(ctx, canvas, lm, poseLm, null);
       const leftEye = mid(lm[33], lm[133]);
       const rightEye = mid(lm[362], lm[263]);
       drawDot(ctx, canvas, leftEye, '#34c759');
       drawDot(ctx, canvas, rightEye, '#34c759');
-      // Eye line
       drawLandmarkLine(ctx, canvas, leftEye, rightEye, '#34c759');
     }
 
@@ -120,20 +125,75 @@ function drawPreview(canvasId) {
 function drawDot(ctx, canvas, pt, color) {
   const x = (1 - pt.x) * canvas.width;
   const y = pt.y * canvas.height;
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 8;
   ctx.beginPath();
   ctx.fillStyle = color;
-  ctx.arc(x, y, 3, 0, Math.PI * 2);
+  ctx.arc(x, y, 4, 0, Math.PI * 2);
   ctx.fill();
+  ctx.shadowBlur = 0;
 }
 
 function drawLandmarkLine(ctx, canvas, a, b, color) {
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 8;
   ctx.beginPath();
   ctx.strokeStyle = color;
-  ctx.lineWidth = 1.5;
+  ctx.lineWidth = 2.5;
   ctx.lineCap = 'round';
   ctx.moveTo((1 - a.x) * canvas.width, a.y * canvas.height);
   ctx.lineTo((1 - b.x) * canvas.width, b.y * canvas.height);
   ctx.stroke();
+  ctx.shadowBlur = 0;
+}
+
+function drawSilhouetteGuide(ctx, canvas, faceLm, poseLm, pulse) {
+  const alpha = pulse != null ? 0.3 + 0.15 * Math.sin(pulse / 600) : 0.4;
+
+  // Head oval — from face bounding landmarks
+  const leftCheek = faceLm[234];
+  const rightCheek = faceLm[454];
+  const forehead = faceLm[10];
+  const chin = faceLm[152];
+
+  const cx = (1 - (leftCheek.x + rightCheek.x) / 2) * canvas.width;
+  const cy = ((forehead.y + chin.y) / 2) * canvas.height;
+  const rx = Math.abs(rightCheek.x - leftCheek.x) * canvas.width * 0.7;
+  const ry = Math.abs(chin.y - forehead.y) * canvas.height * 0.65;
+
+  ctx.shadowColor = '#34c759';
+  ctx.shadowBlur = 14;
+  ctx.strokeStyle = `rgba(52, 199, 89, ${alpha})`;
+  ctx.fillStyle = `rgba(52, 199, 89, 0.04)`;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  // Neck line
+  const neckX = cx;
+  const neckTopY = cy + ry;
+  const neckBottomY = neckTopY + 20;
+  ctx.beginPath();
+  ctx.moveTo(neckX - 10, neckTopY);
+  ctx.quadraticCurveTo(neckX, neckBottomY + 5, neckX + 10, neckTopY);
+  ctx.stroke();
+
+  // Shoulder curve
+  if (poseLm && poseLm[11].visibility > 0.3 && poseLm[12].visibility > 0.3) {
+    const ls = { x: (1 - poseLm[11].x) * canvas.width, y: poseLm[11].y * canvas.height };
+    const rs = { x: (1 - poseLm[12].x) * canvas.width, y: poseLm[12].y * canvas.height };
+    const midY = (ls.y + rs.y) / 2 - 8;
+
+    ctx.beginPath();
+    ctx.moveTo(ls.x - 20, ls.y + 8);
+    ctx.quadraticCurveTo(ls.x, ls.y - 8, (ls.x + rs.x) / 2, midY);
+    ctx.quadraticCurveTo(rs.x, rs.y - 8, rs.x + 20, rs.y + 8);
+    ctx.stroke();
+  }
+
+  ctx.shadowBlur = 0;
 }
 
 // --- Capture baseline ---
@@ -171,10 +231,17 @@ function startCapture() {
     const sample = detectPosture();
     if (sample) capturedSamples.push(sample);
 
-    // Draw landmarks
+    // Draw silhouette + landmarks
     if (sample) {
-      const faces = faceLandmarker.detectForVideo(video, performance.now() + 0.1);
-      // just show dots for visual feedback
+      const facesAgain = faceLandmarker.detectForVideo(video, performance.now() + 0.1);
+      let poseLmCapture = null;
+      if (poseLandmarker) {
+        const posesAgain = poseLandmarker.detectForVideo(video, performance.now() + 0.2);
+        if (posesAgain.landmarks?.length) poseLmCapture = posesAgain.landmarks[0];
+      }
+      if (facesAgain.faceLandmarks?.length) {
+        drawSilhouetteGuide(ctx, canvas, facesAgain.faceLandmarks[0], poseLmCapture, now);
+      }
       if (sample.leftEye && sample.rightEye) {
         drawDot(ctx, canvas, sample.leftEye, '#34c759');
         drawDot(ctx, canvas, sample.rightEye, '#34c759');
